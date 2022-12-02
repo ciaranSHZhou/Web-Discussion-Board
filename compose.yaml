@@ -1,7 +1,7 @@
 version: "3"
 
 networks:
-  discussion:
+  lecture22:
     external: false
 
 volumes:
@@ -21,7 +21,7 @@ services:
       - mongo
       - keycloak
     networks:
-      - discussion
+      - lecture22
   server2:
     image: server
     build: ./server
@@ -32,22 +32,22 @@ services:
       - mongo
       - keycloak
     networks:
-      - discussion
+      - lecture22
   ui1:
     image: ui
     build: ./ui
     networks:
-      - discussion
+      - lecture22
   ui2:
     image: ui
     build: ./ui
     networks:
-      - discussion
+      - lecture22
   load_balancer:
     image: nginx_load_balancer
     build: ./nginx-load-balancer
     networks:
-      - discussion
+      - lecture22
     ports:
       - "127.0.0.1:8080:80"
     depends_on:
@@ -65,7 +65,7 @@ services:
       - KEYCLOAK_PASSWORD=keycl0ak
     restart: always
     networks:
-      - discussion
+      - lecture22
     volumes:
       - keycloak:/opt/jboss/keycloak/standalone/data
     ports:
@@ -75,7 +75,7 @@ services:
     container_name: mongo
     restart: always
     networks:
-      - discussion
+      - lecture22
     volumes:
       - mongo:/data/db
     ports:
