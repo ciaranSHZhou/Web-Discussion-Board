@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-const orders: Ref<Order[]> = ref([])
+const orders: Ref<Post[]> = ref([])
 
 async function refresh() {
   orders.value = await (await fetch("/api/orders")).json()
