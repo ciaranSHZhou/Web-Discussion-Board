@@ -22,10 +22,6 @@ const router = new VueRouter({
       component: CustomerScreen,
     },
     {
-      path: "/operator",
-      component: OperatorScreen,
-    },
-    {
       path: "/",
       component: StatusScreen,
     }

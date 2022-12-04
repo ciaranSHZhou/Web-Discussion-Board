@@ -3,7 +3,7 @@ import bodyParser from 'body-parser'
 import pino from 'pino'
 import expressPinoLogger from 'express-pino-logger'
 import { Collection, Db, MongoClient, ObjectId } from 'mongodb'
-import { DraftOrder, Order, possibleIngredients } from './data'
+import { Post, User } from './data'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import { Issuer, Strategy } from 'openid-client'
@@ -25,9 +25,9 @@ if (process.env.PROXY_KEYCLOAK_TO_LOCALHOST) {
 const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017'
 const client = new MongoClient(mongoUrl)
 let db: Db
-let customers: Collection
-let orders: Collection
-let operators: Collection
+let posts: Collection
+let users: Collection
+
 
 // set up Express
 const app = express()
@@ -91,49 +91,33 @@ app.post(
   }
 )
 
-app.get("/api/orders", async (req, res) => {
-  res.status(200).json(await orders.find({ state: { $ne: "draft" }}).toArray())
+app.get("/api/posts", async (req, res) => {
+  res.status(200).json(await posts.find({ postId: { $ne: "0" }}).toArray())
 })
 
-app.get("/api/user", (req, res) => {
-  res.json(req.user || {})
-})
 
-app.get("/api/possible-ingredients", checkAuthenticated, (req, res) => {
-  res.status(200).json(possibleIngredients)
-})
 
-app.get("/api/customer", checkAuthenticated, async (req, res) => {
+app.get("/api/user", checkAuthenticated, async (req, res) => {
   const _id = req.user.preferred_username
-  logger.info("/api/customer " + _id)
-  const customer = await customers.findOne({ _id })
+  logger.info("/api/user " + _id)
+  const customer = await users.findOne({ _id })
   if (customer == null) {
     res.status(404).json({ _id })
     return
   }
-  customer.orders = await orders.find({ customerId: _id, state: { $ne: "draft" } }).toArray()
+  customer.orders = await users.find({ customerId: _id, state: { $ne: "draft" } }).toArray()
   res.status(200).json(customer)
 })
 
-app.get("/api/operator", checkAuthenticated, async (req, res) => {
-  const _id = req.user.preferred_username
-  const operator = await operators.findOne({ _id })
-  if (operator == null) {
-    res.status(404).json({ _id })
-    return
-  }
-  operator.orders = await orders.find({ operatorId: _id }).toArray()
-  res.status(200).json(operator)
-})
 
-app.get("/api/customer/draft-order", checkAuthenticated, async (req, res) => {
-  const customerId = req.user.preferred_username
+// app.get("/api/customer/draft-order", checkAuthenticated, async (req, res) => {
+//   const customerId = req.user.preferred_username
 
-  // TODO: validate customerId
+//   // TODO: validate customerId
 
-  const draftOrder = await orders.findOne({ state: "draft", customerId })
-  res.status(200).json(draftOrder || { customerId, ingredients: [] })
-})
+//   const draftOrder = await orders.findOne({ state: "draft", customerId })
+//   res.status(200).json(draftOrder || { customerId, ingredients: [] })
+// })
 
 app.put("/api/customer/draft-order", checkAuthenticated, async (req, res) => {
   const order: DraftOrder = req.body
@@ -227,9 +211,9 @@ app.put("/api/order/:orderId", checkAuthenticated, async (req, res) => {
 client.connect().then(() => {
   logger.info('connected successfully to MongoDB')
   db = client.db("test")
-  operators = db.collection('operators')
-  orders = db.collection('orders')
-  customers = db.collection('customers')
+  posts = db.collection('posts')
+  users = db.collection('users')
+
 
   Issuer.discover("http://127.0.0.1:8081/auth/realms/smoothie/.well-known/openid-configuration").then(issuer => {
     const client = new issuer.Client(keycloak)
@@ -246,11 +230,11 @@ client.connect().then(() => {
         logger.info("oidc " + JSON.stringify(userInfo))
 
         const _id = userInfo.preferred_username
-        const operator = await operators.findOne({ _id })
-        if (operator != null) {
-          userInfo.roles = ["operator"]
-        } else {
-          await customers.updateOne(
+        // const operator = await operators.findOne({ _id })
+        // if (operator != null) {
+        //   userInfo.roles = ["operator"]
+        // } else {
+          await posts.updateOne(
             { _id },
             {
               $set: {
@@ -260,7 +244,7 @@ client.connect().then(() => {
             { upsert: true }
           )
           userInfo.roles = ["customer"]
-        }
+        // }
 
         return done(null, userInfo)
       }
