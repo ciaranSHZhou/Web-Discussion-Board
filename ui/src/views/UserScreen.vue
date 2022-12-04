@@ -1,7 +1,6 @@
 <template>
   <div class="mx-3 my-3">
-    <h2>Orders</h2>
-    <b-button @click="refresh" class="mb-2">Refresh</b-button>
+    <h2>Posts</h2>
     <b-container fluid class="my-4">
       <b-row>
         <b-col xs="12" sm="4">
@@ -9,31 +8,30 @@
             <template #header>
               <div class="d-flex justify-content-between align-items-center">
                 Lists
-                <b-button class="ml-3" size="sm" @click="refreshLists"><b-icon-arrow-clockwise /></b-button>
+                <b-button class="ml-3" size="sm" @click="refreshPosts"><b-icon-arrow-clockwise /></b-button>
               </div>
             </template>
             <b-list-group flush>
               <b-list-group-item
-                v-for="list, i in lists"
+                v-for="post, i in posts"
                 :key="i"
                 class="d-flex justify-content-between align-items-center"
-                :class="{ 'font-weight-bold': selectedList?.id === list.id }"
+                :class="{ 'font-weight-bold': selectedPost?.id === post.id }"
               >
-                <span @click="selectList(list.id)" title="list.id">{{ list.name }}</span>
-                <b-badge variant="dark" pill>{{ list.count }}</b-badge>
+                <span @click="selectPost(post.id)" title="list.id">{{ post.title }}</span>
               </b-list-group-item>
               <b-list-group-item>
-                <b-input-group>
+                <!-- <b-input-group>
                   <b-form-input v-model="nameOfListToCreate" placeholder="List name" />
                   <b-input-group-append>
                     <b-button @click="handleClickAddList"><b-icon-plus-circle /></b-button>
-                  </b-input-group-append>
-                </b-input-group>
+                  </b-input-group-append> -->
+                <!-- </b-input-group> -->
               </b-list-group-item>
             </b-list-group>
           </b-card>
         </b-col>
-        <b-col xs="12" sm="8">
+        <!-- <b-col xs="12" sm="8">
           <b-card no-body>
             <template #header>
               <div v-if="selectedList != null" class="d-flex justify-content-between align-items-center">
@@ -66,7 +64,7 @@
               </b-list-group-item>
             </b-list-group>
           </b-card>
-        </b-col>
+        </b-col> -->
       </b-row>
     </b-container>
   </div>
@@ -74,22 +72,23 @@
 
 <script setup lang="ts">
 import { watch, ref, inject, Ref } from 'vue'
-import { CustomerWithOrders } from "../../../server/data"
+import { Post, User } from "../../../server/data"
 
-const customer: Ref<CustomerWithOrders | null> = ref(null)
+
 const user: Ref<any> = inject("user")!
-
+const posts: Ref<Post[]> = ref([])
 const draftOrderIngredients: Ref<string[]> = ref([])
-const possibleIngredients: Ref<string[]> = ref([])
+const selectedPost: Ref<null | Post> = ref(null)
 
-async function refresh() {
+async function refreshPosts() {
+  posts.value = await (await fetch("/api/posts")).json()
 
-  if (user.value) {
-    customer.value = await (await fetch("/api/customer")).json()
-    draftOrderIngredients.value = (await (await fetch("/api/customer/draft-order")).json())?.ingredients || []
-  }
 }
-watch(user, refresh, { immediate: true })
+watch(user, refreshPosts, { immediate: true })
+
+async function selectPost(listId: string) {
+  // selectedPost.value = await getPost(listId)
+}
 
 async function save() {
   await fetch(
@@ -109,6 +108,6 @@ async function submit() {
     "/api/customer/submit-draft-order",
     { method: "POST" }
   )
-  await refresh()
+  await refreshPosts()
 }
 </script>

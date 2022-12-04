@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from '@/App.vue'
-import CustomerScreen from '@/views/CustomerScreen.vue'
+import UserScreen from '@/views/UserScreen.vue'
 import OperatorScreen from '@/views/OperatorScreen.vue'
 import StatusScreen from '@/views/StatusScreen.vue'
 
@@ -18,13 +18,13 @@ const router = new VueRouter({
   mode: "history",
   routes: [
     {
-      path: "/customer",
-      component: CustomerScreen,
+      path: "/user",
+      component: UserScreen,
     },
-    {
-      path: "/",
-      component: StatusScreen,
-    }
+    // {
+    //   path: "/",
+    //   component: StatusScreen,
+    // }
   ],
 })
 

@@ -119,93 +119,93 @@ app.get("/api/user", checkAuthenticated, async (req, res) => {
 //   res.status(200).json(draftOrder || { customerId, ingredients: [] })
 // })
 
-app.put("/api/customer/draft-order", checkAuthenticated, async (req, res) => {
-  const order: DraftOrder = req.body
+// app.put("/api/customer/draft-order", checkAuthenticated, async (req, res) => {
+//   const order: DraftOrder = req.body
 
-  // TODO: validate customerId
+//   // TODO: validate customerId
 
-  const result = await orders.updateOne(
-    {
-      customerId: req.user.preferred_username,
-      state: "draft",
-    },
-    {
-      $set: {
-        ingredients: order.ingredients
-      }
-    },
-    {
-      upsert: true
-    }
-  )
-  res.status(200).json({ status: "ok" })
-})
+//   const result = await orders.updateOne(
+//     {
+//       customerId: req.user.preferred_username,
+//       state: "draft",
+//     },
+//     {
+//       $set: {
+//         ingredients: order.ingredients
+//       }
+//     },
+//     {
+//       upsert: true
+//     }
+//   )
+//   res.status(200).json({ status: "ok" })
+// })
 
-app.post("/api/customer/submit-draft-order", checkAuthenticated, async (req, res) => {
-  const result = await orders.updateOne(
-    {
-      customerId: req.user.preferred_username,
-      state: "draft",
-    },
-    {
-      $set: {
-        state: "queued",
-      }
-    }
-  )
-  if (result.modifiedCount === 0) {
-    res.status(400).json({ error: "no draft order" })
-    return
-  }
-  res.status(200).json({ status: "ok" })
-})
+// app.post("/api/customer/submit-draft-order", checkAuthenticated, async (req, res) => {
+//   const result = await orders.updateOne(
+//     {
+//       customerId: req.user.preferred_username,
+//       state: "draft",
+//     },
+//     {
+//       $set: {
+//         state: "queued",
+//       }
+//     }
+//   )
+//   if (result.modifiedCount === 0) {
+//     res.status(400).json({ error: "no draft order" })
+//     return
+//   }
+//   res.status(200).json({ status: "ok" })
+// })
 
-app.put("/api/order/:orderId", checkAuthenticated, async (req, res) => {
-  const order: Order = req.body
+// app.put("/api/order/:orderId", checkAuthenticated, async (req, res) => {
+//   const order: Order = req.body
 
-  // TODO: validate order object
+//   // TODO: validate order object
 
-  const condition: any = {
-    _id: new ObjectId(req.params.orderId),
-    state: { 
-      $in: [
-        // because PUT is idempotent, ok to call PUT twice in a row with the existing state
-        order.state
-      ]
-    },
-  }
-  switch (order.state) {
-    case "blending":
-      condition.state.$in.push("queued")
-      // can only go to blending state if no operator assigned (or is the current user, due to idempotency)
-      condition.$or = [{ operatorId: { $exists: false }}, { operatorId: order.operatorId }]
-      break
-    case "done":
-      condition.state.$in.push("blending")
-      condition.operatorId = order.operatorId
-      break
-    default:
-      // invalid state
-      res.status(400).json({ error: "invalid state" })
-      return
-  }
+//   const condition: any = {
+//     _id: new ObjectId(req.params.orderId),
+//     state: { 
+//       $in: [
+//         // because PUT is idempotent, ok to call PUT twice in a row with the existing state
+//         order.state
+//       ]
+//     },
+//   }
+//   switch (order.state) {
+//     case "blending":
+//       condition.state.$in.push("queued")
+//       // can only go to blending state if no operator assigned (or is the current user, due to idempotency)
+//       condition.$or = [{ operatorId: { $exists: false }}, { operatorId: order.operatorId }]
+//       break
+//     case "done":
+//       condition.state.$in.push("blending")
+//       condition.operatorId = order.operatorId
+//       break
+//     default:
+//       // invalid state
+//       res.status(400).json({ error: "invalid state" })
+//       return
+//   }
   
-  const result = await orders.updateOne(
-    condition,
-    {
-      $set: {
-        state: order.state,
-        operatorId: order.operatorId,
-      }
-    }
-  )
+//   const result = await orders.updateOne(
+//     condition,
+//     {
+//       $set: {
+//         state: order.state,
+//         operatorId: order.operatorId,
+//       }
+//     }
+//   )
 
-  if (result.matchedCount === 0) {
-    res.status(400).json({ error: "orderId does not exist or state change not allowed" })
-    return
-  }
-  res.status(200).json({ status: "ok" })
-})
+//   if (result.matchedCount === 0) {
+//     res.status(400).json({ error: "orderId does not exist or state change not allowed" })
+//     return
+//   }
+//   res.status(200).json({ status: "ok" })
+// })
 
 // connect to Mongo
 client.connect().then(() => {
