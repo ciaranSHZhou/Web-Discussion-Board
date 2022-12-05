@@ -6,10 +6,8 @@
         <span v-else>Discussion Board</span>
       </b-navbar-brand>
       <b-navbar-nav>
-        <b-nav-item href="/">All Posts</b-nav-item>
-        <b-nav-item v-if="user?.roles?.includes('user')" href="/user">My Orders</b-nav-item>
-        <!-- <b-nav-item v-if="user?.roles?.includes('operator')" href="/operator">My Work Screen</b-nav-item>
-        <b-nav-item v-if="user?.name == null" href="/api/login">Login</b-nav-item> -->
+        <!-- <b-nav-item v-if="user?.roles?.includes('operator')" href="/operator">My Work Screen</b-nav-item>-->
+        <b-nav-item v-if="user?.name == null" href="/api/login">Login</b-nav-item> 
         <b-nav-item v-if="user?.name" @click="logout">Logout</b-nav-item>
         <form method="POST" action="/api/logout" id="logoutForm" />
       </b-navbar-nav>

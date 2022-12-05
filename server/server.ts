@@ -92,21 +92,30 @@ app.post(
 )
 
 app.get("/api/posts", async (req, res) => {
-  res.status(200).json(await posts.find({ postId: { $ne: "0" }}).toArray())
+  res.status(200).json(await posts.find({ postId: { $ne: "" }}).toArray())
 })
+
+app.get("/api/user", (req, res) => {
+  res.json(req.user || {})
+})
+
+app.get('/api/post/:postId', async (req, res) =>{
+  res.json(200).json(await posts.find({ postId:  req.params.postId}))
+})
+
 
 
 
 app.get("/api/user", checkAuthenticated, async (req, res) => {
   const _id = req.user.preferred_username
   logger.info("/api/user " + _id)
-  const customer = await users.findOne({ _id })
-  if (customer == null) {
+  const user = await users.findOne({ _id })
+  if (user == null) {
     res.status(404).json({ _id })
     return
   }
-  customer.orders = await users.find({ customerId: _id, state: { $ne: "draft" } }).toArray()
-  res.status(200).json(customer)
+  // customer.orders = await users.find({ customerId: _id, state: { $ne: "draft" } }).toArray()
+  res.status(200).json(user)
 })
 
 
@@ -215,7 +224,7 @@ client.connect().then(() => {
   users = db.collection('users')
 
 
-  Issuer.discover("http://127.0.0.1:8081/auth/realms/smoothie/.well-known/openid-configuration").then(issuer => {
+  Issuer.discover("http://127.0.0.1:8081/auth/realms/discussion/.well-known/openid-configuration").then(issuer => {
     const client = new issuer.Client(keycloak)
   
     passport.use("oidc", new Strategy(
@@ -243,7 +252,7 @@ client.connect().then(() => {
             },
             { upsert: true }
           )
-          userInfo.roles = ["customer"]
+          userInfo.roles = ["user"]
         // }
 
         return done(null, userInfo)
@@ -266,7 +275,7 @@ client.connect().then(() => {
 
     // start server
     app.listen(port, () => {
-      logger.info(`Smoothie server listening on port ${port}`)
+      logger.info(`Discussion Board server listening on port ${port}`)
     })
   })
 })
