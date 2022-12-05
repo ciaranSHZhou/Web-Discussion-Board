@@ -21,7 +21,7 @@ async function main() {
   const db = client.db("test")
 
   // set up unique index for upsert -- to make sure a customer cannot have more than one draft order
-  db.collection("post").createIndex(
+  db.collection("posts").createIndex(
     { id: 1 }, 
     { unique: true, partialFilterExpression: { state: "draft" } }
   )
