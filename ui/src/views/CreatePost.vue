@@ -30,9 +30,9 @@
         </b-row>
         <b-row>
 
-            <button class="btn btn-primary">Submit</button>
+            <b-button class="mx-1" variant="primary">Submit</b-button>
 
-            <b-button class="btn btn-secondary" href="/">Cancel</b-button>
+            <b-button class="mx-1" href="/">Cancel</b-button>
  
         </b-row>
       </b-container>
