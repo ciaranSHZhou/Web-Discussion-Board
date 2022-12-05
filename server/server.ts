@@ -243,7 +243,7 @@ client.connect().then(() => {
         // if (operator != null) {
         //   userInfo.roles = ["operator"]
         // } else {
-          await posts.updateOne(
+          await users.updateOne(
             { _id },
             {
               $set: {
