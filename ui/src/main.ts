@@ -17,15 +17,15 @@ Vue.use(VueRouter)
 const router = new VueRouter({
   mode: "history",
   routes: [
-
-    {
-      path: "/",
-      component: UserScreen,
-    },
     {
       path: "/posting",
       component: CreatePost,
     },
+    {
+      path: "/",
+      component: UserScreen,
+    },
+
   ],
 })
 

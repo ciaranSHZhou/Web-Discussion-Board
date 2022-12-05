@@ -28,28 +28,27 @@
 
           </b-col>
         </b-row>
+        <b-row>
+
+            <button class="btn btn-primary">Submit</button>
+
+            <b-button class="btn btn-secondary" href="/">Cancel</b-button>
+ 
+        </b-row>
       </b-container>
     </div>
   </template>
   
   <script setup lang="ts">
-  import { computed, ref, watch } from 'vue'
-
+import { onMounted, ref, Ref } from 'vue'
+import { getPosts, addList, getPost} from '../data'
+import { Post } from "../../../server/data"
   
-  // start off with a blank card
-
-  
-  ///////////////////////////////////////////////////////////////////////////////////////
-  // form validation
-  
-
-  ///////////////////////////////////////////////////////////////////////////////////////
-  // undo/redo buffer
-  
-
-
-
-  ///////////////////////////////////////////////////////////////////////////////////////
-  // dirty flag
+  async function submit() {
+  await fetch(
+    "/api/create-a-post",
+    { method: "POST" }
+  )
+}
 
   </script>
