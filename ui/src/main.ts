@@ -2,8 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from '@/App.vue'
 import UserScreen from '@/views/UserScreen.vue'
-import OperatorScreen from '@/views/OperatorScreen.vue'
-import StatusScreen from '@/views/StatusScreen.vue'
+import CreatePost from '@/views/CreatePost.vue'
+
 
 import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue"
 
@@ -21,7 +21,11 @@ const router = new VueRouter({
     {
       path: "/",
       component: UserScreen,
-    }
+    },
+    {
+      path: "/posting",
+      component: CreatePost,
+    },
   ],
 })
 

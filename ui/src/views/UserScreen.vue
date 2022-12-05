@@ -22,10 +22,7 @@
               <b-list-group-item>
                 <b-input-group>
                   <!-- v-model: two way reactivity, connect code implementation and UI -->
-                  <b-form-input v-model="nameOfListToCreate" placeholder="List name" />
-                  <b-input-group-append>
-                    <b-button @click="handleClickAddList"><b-icon-plus-circle /></b-button>
-                  </b-input-group-append>
+                <b-button href="/posting">Create a Post</b-button>
                 </b-input-group>
               </b-list-group-item>
             </b-list-group>
@@ -34,12 +31,14 @@
         <b-col xs="12" sm="8">
           <b-card v-if="selectedPost != null">
             <h2>{{selectedPost?.title}}</h2>
-            <div xs="12" sm="3">by {{selectedPost?.userId}}</div>
-            <body>
+            <div xs="12" sm="3" class="text-muted">by {{selectedPost?.userId}}</div>
+           
+          </b-card>
+          <b-card>
+
               <div>
               {{selectedPost?.content}}
             </div>
-            </body>
           </b-card>
         </b-col>
       </b-row>
@@ -54,6 +53,7 @@ import { Post } from "../../../server/data"
 
 const posts: Ref<Post[]> = ref([])
 const nameOfListToCreate = ref("")
+const modalShow: Ref<any> = ref(false)
 
 const selectedPost: Ref<null | Post> = ref(null)// What gets showed on the RH side
 const descriptionOfItemToAdd = ref("")
