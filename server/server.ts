@@ -119,15 +119,6 @@ app.get("/api/user", checkAuthenticated, async (req, res) => {
 })
 
 
-// app.get("/api/customer/draft-order", checkAuthenticated, async (req, res) => {
-//   const customerId = req.user.preferred_username
-
-//   // TODO: validate customerId
-
-//   const draftOrder = await orders.findOne({ state: "draft", customerId })
-//   res.status(200).json(draftOrder || { customerId, ingredients: [] })
-// })
-
 
 app.post("/api/create-a-post", checkAuthenticated, async (req, res) => {
   const postInfo = JSON.parse(JSON.stringify(req.body))
@@ -137,71 +128,10 @@ app.post("/api/create-a-post", checkAuthenticated, async (req, res) => {
         content: postInfo.content
         
         })
-  // const result = await posts.updateOne(
-  //   {
-      
-  //   },
-  //   {
-  //     $set: {
-  //       userId: req.user.preferred_username,
-  //     title: postInfo.title,
-  //     content: postInfo.content
-      
-  //     }
-  //   },
-  //   {
-  //     upsert: true
-  //   }
-  // )
+
   res.status(200).json({ status: "ok" })
 })
 
-// app.put("/api/order/:orderId", checkAuthenticated, async (req, res) => {
-//   const order: Order = req.body
-
-//   // TODO: validate order object
-
-//   const condition: any = {
-//     _id: new ObjectId(req.params.orderId),
-//     state: { 
-//       $in: [
-//         // because PUT is idempotent, ok to call PUT twice in a row with the existing state
-//         order.state
-//       ]
-//     },
-//   }
-//   switch (order.state) {
-//     case "blending":
-//       condition.state.$in.push("queued")
-//       // can only go to blending state if no operator assigned (or is the current user, due to idempotency)
-//       condition.$or = [{ operatorId: { $exists: false }}, { operatorId: order.operatorId }]
-//       break
-//     case "done":
-//       condition.state.$in.push("blending")
-//       condition.operatorId = order.operatorId
-//       break
-//     default:
-//       // invalid state
-//       res.status(400).json({ error: "invalid state" })
-//       return
-//   }
-  
-//   const result = await orders.updateOne(
-//     condition,
-//     {
-//       $set: {
-//         state: order.state,
-//         operatorId: order.operatorId,
-//       }
-//     }
-//   )
-
-//   if (result.matchedCount === 0) {
-//     res.status(400).json({ error: "orderId does not exist or state change not allowed" })
-//     return
-//   }
-//   res.status(200).json({ status: "ok" })
-// })
 
 // connect to Mongo
 client.connect().then(() => {
