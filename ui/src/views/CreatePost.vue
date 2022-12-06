@@ -29,7 +29,7 @@
           </b-col>  
         </b-row>
         <b-row>
-            <!-- <b-button class="mx-1" variant="success" @click="save">Save</b-button> -->
+
             <b-button class="mx-1" variant="primary" @click="submit" href="/">Submit</b-button>
 
             <b-button class="mx-1" href="/">Cancel</b-button>
@@ -64,11 +64,6 @@ async function submit() {
   )
 }
 
-// async function submit() {
-// await fetch(
-//     "/api/create-a-post",
-//     { method: "POST" }
-// )
-// }
+
 
   </script>
