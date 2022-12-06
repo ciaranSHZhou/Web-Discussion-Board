@@ -15,9 +15,9 @@
                 v-for="post, i in posts"
                 :key="i"
                 class="d-flex justify-content-between align-items-center"
-                :class="{ 'font-weight-bold': selectedPost?.id === post.id }"
+
               >
-              <span @click="selectPost(post)" title="post.id">{{ post.title }}</span>
+              <span @click="selectPost(post)" title="post.id" >{{ post.title }}</span>
               </b-list-group-item>
               <b-list-group-item>
                 <b-input-group>
@@ -47,13 +47,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, Ref } from 'vue'
+import { onMounted,inject, ref, Ref } from 'vue'
 import { getPosts, addList, getPost} from '../data'
 import { Post } from "../../../server/data"
 
 const posts: Ref<Post[]> = ref([])
 const nameOfListToCreate = ref("")
 const modalShow: Ref<any> = ref(false)
+const user: Ref<any> = inject("user")!
 
 const selectedPost: Ref<null | Post> = ref(null)// What gets showed on the RH side
 const descriptionOfItemToAdd = ref("")

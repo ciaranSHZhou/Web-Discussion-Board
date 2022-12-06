@@ -7,8 +7,8 @@ const client = new MongoClient(url)
 
 const posts: Post[] = [
   {
-    id: "p0",
-    userId: "d",
+    _id: "p0",
+    userId: "admin",
     title: "Griffith Did Nothing Wrong!",
     content: "Did he?"
   },
@@ -20,11 +20,7 @@ async function main() {
 
   const db = client.db("test")
 
-  // set up unique index for upsert -- to make sure a customer cannot have more than one draft order
-  db.collection("posts").createIndex(
-    { id: 1 }, 
-    { unique: true, partialFilterExpression: { state: "draft" } }
-  )
+
 
   console.log("inserting posts", await db.collection("posts").insertMany(posts as any))
   process.exit(0)
