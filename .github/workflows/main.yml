@@ -8,7 +8,6 @@ on:
 jobs:
 
   build:
-    if: manual
     runs-on: self-hosted
 		
 
@@ -28,7 +27,6 @@ jobs:
           docker build -t nginx_load_balancer .
           cd ..
   deploy:
-    if: manual
     runs-on: self-hosted
 		
 
