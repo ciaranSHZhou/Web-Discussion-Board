@@ -1,0 +1,41 @@
+name: Docker Image CI
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    if: manual
+    runs-on: self-hosted
+		
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: |
+          echo "Building application..."
+          cd web-discussion-board/
+          cd ui
+          docker build -t ui .
+          cd ..
+          cd server
+          docker build -t server .
+          cd ..
+          cd nginx-load-balancer
+          docker build -t nginx_load_balancer .
+          cd ..
+  deploy:
+    if: manual
+    runs-on: self-hosted
+		
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Deploy
+      run: |
+        echo "Deploying application..."
+        cd web-discussion-board/
+        docker compose -f compose.yaml up -d --build
