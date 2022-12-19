@@ -15,7 +15,6 @@ jobs:
     - name: Build the Docker image
       run: |
           echo "Building application..."
-          cd web-discussion-board/
           cd ui
           docker build -t ui .
           cd ..
@@ -33,5 +32,4 @@ jobs:
     - name: Deploy
       run: |
         echo "Deploying application..."
-        cd web-discussion-board/
         docker compose -f compose.yaml up -d --build
