@@ -24,12 +24,12 @@ jobs:
           cd nginx-load-balancer
           docker build -t nginx_load_balancer .
           cd ..
-  deploy:
-    runs-on: [ubuntu-latest]
+  # deploy:
+  #   runs-on: [ubuntu-latest]
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Deploy
-      run: |
-        echo "Deploying application..."
-        docker compose -f compose.yaml up -d --build
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Deploy
+  #     run: |
+  #       echo "Deploying application..."
+  #       docker compose -f compose.yaml up -d --build
